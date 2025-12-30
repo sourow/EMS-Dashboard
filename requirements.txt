@@ -1,0 +1,7 @@
+Flask>=2.2,<3.0
+Flask-SocketIO>=5.3,<6.0
+eventlet>=0.33,<0.34
+paho-mqtt>=1.6,<2.0
+Werkzeug>=2.2,<3.0
+pdfkit>=1.0,<2.0
+XlsxWriter>=3.0,<4.0

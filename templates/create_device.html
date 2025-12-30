@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Device</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        /* Custom styles to improve the frontend */
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 10px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+        }
+        .card-body {
+            padding: 30px;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .form-control,
+        .form-select {
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .btn-secondary {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .invalid-feedback {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Create a New Device
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('app_routes.create_device') }}" novalidate>
+                    <div class="mb-3">
+                        <label for="device_name" class="form-label">Device Name</label>
+                        <input type="text" class="form-control" id="device_name" name="device_name" placeholder="Enter device name" required>
+                        <div class="invalid-feedback">Device name is required.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="device_type" class="form-label">Device Type</label>
+                        <input type="text" class="form-control" id="device_type" name="device_type" placeholder="Enter device type" required>
+                        <div class="invalid-feedback">Device type is required.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="device_location" class="form-label">Device Location</label>
+                        <input type="text" class="form-control" id="device_location" name="device_location" placeholder="Enter device location" required>
+                        <div class="invalid-feedback">Device location is required.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="organization" class="form-label">Organization</label>
+                        <input type="text" class="form-control" id="organization" name="organization" placeholder="Enter organization" required>
+                        <div class="invalid-feedback">Organization is required.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="organogram" class="form-label">Organogram</label>
+                        <input type="text" class="form-control" id="organogram" name="organogram" placeholder="Enter organogram" required>
+                        <div class="invalid-feedback">Organogram is required.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="mqtt_topic_id" class="form-label">Assign MQTT Topic</label>
+                        <select class="form-select" id="mqtt_topic_id" name="mqtt_topic_id" required>
+                            <option value="" disabled selected>Select an MQTT Topic</option>
+                            {% for topic in topics %}
+                                <option value="{{ topic.id }}">{{ topic.topic_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Please select an MQTT topic.</div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Create Device</button>
+                        <a href="{{ url_for('app_routes.home') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Bootstrap form validation
+        (function() {
+            'use strict';
+            var forms = document.querySelectorAll('form');
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+</body>
+</html>

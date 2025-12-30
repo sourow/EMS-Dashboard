@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download IoT Data</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom styles to improve the frontend */
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 700px;
+            margin-top: 50px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+        }
+        .card-body {
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 0 0 10px 10px;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .form-control {
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #007bff;
+        }
+        .btn-primary,
+        .btn-secondary {
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .invalid-feedback {
+            font-size: 14px;
+        }
+        /* Fixes for dropdown input field */
+        select.form-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            border-color: #d1d1d1;
+        }
+        /* Button block alignment */
+        .btn-block {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        /* Additional spacing */
+        .form-group:last-of-type {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Download IoT Device Data
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('app_routes.download_data') }}">
+                    <!-- Dropdown for selecting the topic -->
+                    <div class="form-group">
+                        <label for="topic_id" class="form-label">Select Topic:</label>
+                        <select name="topic_id" id="topic_id" class="form-control" required>
+                            <option value="" disabled selected>Select a topic</option>
+                            {% for topic in topics %}
+                                <option value="{{ topic['id'] }}">{{ topic['topic_name'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Date selection fields -->
+                    <div class="form-group">
+                        <label for="start_date" class="form-label">Start Date:</label>
+                        <input type="date" name="start_date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date" class="form-label">End Date:</label>
+                        <input type="date" name="end_date" class="form-control" required>
+                    </div>
+
+                    <!-- Format selection dropdown -->
+                    <div class="form-group">
+                        <label for="format_type" class="form-label">Select Format:</label>
+                        <select name="format_type" class="form-control" required>
+                            <option value="excel">Excel</option>
+                            <option value="pdf">PDF</option>
+                        </select>
+                    </div>
+
+                    <!-- Download Type hidden field -->
+                    <input type="hidden" name="download_type" id="download_type" value="">
+
+                    <!-- Buttons for downloading full data or summary -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block" onclick="document.getElementById('download_type').value='full_data';">Download Full Data</button>
+                        <button type="submit" class="btn btn-secondary btn-block" onclick="document.getElementById('download_type').value='summary';">Download Summary</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

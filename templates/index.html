@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Device Data Dashboard - {{ device_location }} - {{ device_type }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Device: {{ device_location }} - {{ device_type }} - {{ device_name }}</h1>
+
+        <!-- Back to Home and Logout Buttons -->
+        <div class="text-center mb-4">
+            <a href="{{ url_for('app_routes.logout') }}" class="btn btn-danger">Logout</a>
+        </div>
+
+        <!-- Dropdown to select the time range -->
+        <div class="text-center mb-4 custom-form-container">
+            <label for="timeRange">Select Time Range:</label>
+            <select id="timeRange" class="form-control w-50 mx-auto">
+                <option value="1">Last 24 Hours (Daily)</option>
+                <option value="7">Last 7 Days</option>
+                <option value="30">Last 30 Days</option>
+                <option value="365">Last 365 Days</option>
+                <option value="all" selected>All Data</option>
+            </select>
+        </div>
+
+                <!-- index.html -->
+        <h3>User Information</h3>
+        <p><strong>Username:</strong> {{ username }}</p>
+        <p><strong>Email:</strong> {{ email }}</p>
+
+        <h3>Device Information</h3>
+        <p><strong>Device Name:</strong> {{ device_name }}</p>
+        <p><strong>Device Type:</strong> {{ device_type }}</p>
+        <p><strong>Device Location:</strong> {{ device_location }}</p>
+
+        <!-- Existing Chart and Data Display will follow here -->
+
+
+
+        <!-- Flex container to hold both chart and real-time chatbox -->
+        <div class="custom-flex-container">
+            <div class="custom-chart-container">
+                <canvas id="dataChart"></canvas>
+            </div>
+
+            <div class="custom-chatbox">
+                <ul id="dataList">
+                    <!-- Data points will be appended here -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Summary Chatbox for Min, Max, Avg -->
+        <div class="custom-summary-chatbox">
+            <div id="minValue" class="custom-summary-item">Min: -</div>
+            <div id="maxValue" class="custom-summary-item">Max: -</div>
+            <div id="avgValue" class="custom-summary-item">Average: -</div>
+        </div>
+
+        <p class="text-center mt-4">Data provided by
+            <a href="https://www.btracsolutions.com/">B-Trac Solutions</a>
+        </p>
+            
+    <script>
+        $(document).ready(function() {
+            var topicId = "{{ topic_id }}";  // Use topic_id passed from backend
+            var ctx = document.getElementById('dataChart').getContext('2d');
+            var maxDataPoints = 50;
+            var selectedRange = 'all';
+            var isUpdating = false;  // Flag to manage real-time updates
+            var filterRequest = null;  // Holds the queued filter request
+            var allData = [];  // Store all the data for calculating min, max, and avg
+
+            // Initialize the chart
+            var dataChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '{{ device_type }}',
+                        data: [],
+                        borderColor: 'blue',
+                        backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                        fill: true,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'category',
+                            ticks: { display: false },
+                            title: { display: true, text: 'Data Points' }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            title: { display: true, text: '{{ device_type }}' },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '°C';  // Add °C to each Y-axis tick
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return '{{ device_type }}: ' + tooltipItem.raw + '°C';
+                                },
+                                afterLabel: function(tooltipItem) {
+                                    return 'Timestamp: ' + tooltipItem.label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Function to update min, max, and avg values in the summary box
+            function updateSummary() {
+                if (allData.length > 0) {
+                    var min = Math.min(...allData);
+                    var max = Math.max(...allData);
+                    var avg = (allData.reduce((a, b) => a + b, 0) / allData.length).toFixed(2);
+
+                    $('#minValue').text(`Min: ${min}°C`);
+                    $('#maxValue').text(`Max: ${max}°C`);
+                    $('#avgValue').text(`Average: ${avg}°C`);
+                } else {
+                    $('#minValue').text(`Min: -`);
+                    $('#maxValue').text(`Max: -`);
+                    $('#avgValue').text(`Average: -`);
+                }
+            }
+
+            // Function to load data for chart and chatbox
+            function loadData(range) {
+                isUpdating = true;  // Pause WebSocket updates during data load
+                $.getJSON(`/load_data_topic${topicId}?range=${range}`, function(data) {
+                    allData = [];  // Reset allData array
+
+                    dataChart.data.labels = [];
+                    dataChart.data.datasets[0].data = [];
+                    $('#dataList').empty();  // Clear the chatbox
+
+                    data.forEach(function(item) {
+                        dataChart.data.labels.push(item.timestamp);
+                        dataChart.data.datasets[0].data.push(item.param_data);
+                        allData.push(item.param_data);  // Collect data for summary
+
+                        // Add data to chatbox
+                        var deviceType = "{{ device_type }}";  // Pass device_type from backend to JS
+                        var listItem = `<li>
+                                            <div class="data-point">${deviceType}: ${item.param_data}°C</div>
+                                            <div class="timestamp">${item.timestamp}</div>
+                                        </li>`;
+                        $('#dataList').prepend(listItem);  // Add latest data at the top
+                    });
+
+                    if (dataChart.data.labels.length > maxDataPoints) {
+                        dataChart.data.labels.shift();
+                        dataChart.data.datasets[0].data.shift();
+                    }
+
+                    dataChart.update();
+                    updateSummary();  // Update summary box
+                    isUpdating = false;  // Allow WebSocket updates after data load
+
+                    // If there's a queued filter request, process it
+                    if (filterRequest) {
+                        filterRequest();
+                        filterRequest = null;  // Clear the queue
+                    }
+                });
+            }
+
+            // Queue the filter request if WebSocket is updating
+            function handleFiltering(range) {
+                if (isUpdating) {
+                    filterRequest = function() { loadData(range); };  // Queue the request
+                } else {
+                    loadData(range);  // Load immediately if not updating
+                }
+            }
+
+            // Load initial data (daily by default)
+            loadData(selectedRange);
+
+            // Update data based on selected range (Filter dropdown)
+            $('#timeRange').on('change', function() {
+                selectedRange = $(this).val();
+                handleFiltering(selectedRange);
+            });
+
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+            // WebSocket updates (Real-time updates for new data)
+            socket.on('new_data_topic' + topicId, function(newData) {
+                if (!isUpdating) {
+                    // Update chart
+                    dataChart.data.labels.push(newData.timestamp);
+                    dataChart.data.datasets[0].data.push(newData.param_data);
+                    allData.push(newData.param_data);  // Add to summary data
+
+                    if (dataChart.data.labels.length > maxDataPoints) {
+                        dataChart.data.labels.shift();
+                        dataChart.data.datasets[0].data.shift();
+                        allData.shift();  // Remove the oldest data from summary
+                    }
+
+                    dataChart.update();
+
+                    // Update chatbox
+                    var listItem = `<li>
+                                        <div class="data-point">{{ device_type }}: ${newData.param_data}°C</div>
+                                        <div class="timestamp">${newData.timestamp}</div>
+                                    </li>`;
+                    $('#dataList').prepend(listItem);  // Add latest data at the top
+
+                    // Update min, max, and avg values
+                    updateSummary();
+                }
+            });
+
+            // Polling mechanism to ensure data stays up to date every 10 seconds
+            setInterval(function() {
+                if (!isUpdating) {
+                    $.getJSON(`/load_data_topic${topicId}?range=${selectedRange}`, function(data) {
+                        dataChart.data.labels = [];
+                        dataChart.data.datasets[0].data = [];
+                        $('#dataList').empty();
+                        allData = [];
+
+                        data.forEach(function(item) {
+                            dataChart.data.labels.push(item.timestamp);
+                            dataChart.data.datasets[0].data.push(item.param_data);
+                            allData.push(item.param_data);
+
+                            var listItem = `<li>
+                                                <div class="data-point">{{ device_type }}: ${item.param_data}°C</div>
+                                                <div class="timestamp">${item.timestamp}</div>
+                                            </li>`;
+                            $('#dataList').prepend(listItem);  // Add latest data at the top
+                        });
+
+                        if (dataChart.data.labels.length > maxDataPoints) {
+                            dataChart.data.labels.shift();
+                            dataChart.data.datasets[0].data.shift();
+                            allData.shift();
+                        }
+
+                        dataChart.update();
+                        updateSummary();  // Update summary box
+                    });
+                }
+            }, 10000);  // Adjust the interval as needed (e.g., every 10 seconds)
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register New User</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Page Header -->
+        <div class="register-header text-center mb-5">
+            <h1>Register New User</h1>
+        </div>
+
+        <!-- Form Container -->
+        <div class="register-form-container">
+            <form method="POST" action="{{ url_for('app_routes.register') }}" class="register-form">
+                <!-- CSRF Token for Security -->
+                {% if csrf_token %}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% endif %}
+
+                <!-- User Details Section -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm Password:</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                </div>
+
+                <!-- Devices Section (Replaces MQTT Topics) -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="devices">Assign Devices:</label>
+                        <select multiple class="form-control" id="devices" name="devices" required>
+                            {% for device in devices %}
+                                <option value="{{ device['id'] }}">{{ device['device_name'] }} ({{ device['device_type'] }})</option>
+                            {% endfor %}
+                        </select>
+                        <small class="form-text text-muted">Hold Ctrl (Windows) or Command (Mac) to select multiple devices.</small>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Back to Dashboard Button -->
+        <div class="text-center mt-4">
+            <a href="{{ url_for('app_routes.home') }}" class="btn btn-secondary" style="margin-bottom: 50px;">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register New User</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="register-header text-center mb-4">
+            <h1>Register New User</h1>
+        </div>
+        <div class="register-form-container">
+            <form method="POST" action="{{ url_for('app_routes.register') }}" class="register-form">
+                <!-- CSRF Token for Security
+                {% if csrf_token %}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {% endif %}
+                
+                <!-- User Details Section
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm Password:</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                </div>
+
+                <!-- MQTT Topics Section
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="mqtt_topics">Assign MQTT Topics:</label>
+                        <select multiple class="form-control" id="mqtt_topics" name="mqtt_topics" required>
+                            {% for topic in topics %}
+                                <option value="{{ topic['id'] }}">{{ topic['topic_name'] }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="form-text text-muted">Hold Ctrl (Windows) or Command (Mac) to select multiple topics.</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Register</button>
+                </div>
+            </form>
+        </div>
+        <div style="margin: 50px;" class="text-center mt-4">
+            <a href="{{ url_for('app_routes.home') }}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
+-->

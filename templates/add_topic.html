@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New MQTT Topic</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/add_topic.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Add New MQTT Topic</h1>
+
+        <div class="form-container">
+            <form method="POST" action="{{ url_for('app_routes.add_topic') }}" class="add-topic-form">
+                <div class="form-group">
+                    <label for="topic_name">Topic Name:</label>
+                    <input type="text" class="form-control" id="topic_name" name="topic_name" required>
+                    <small class="form-text text-muted">Enter the unique MQTT topic name.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="broker_address">Broker Address:</label>
+                    <input type="text" class="form-control" id="broker_address" name="broker_address" 
+                           required pattern="^([a-zA-Z0-9]+([\-\.]{1}[a-zA-Z0-9]+)*\.[a-zA-Z]{2,63}|localhost|(\d{1,3}\.){3}\d{1,3})$" 
+                           title="Enter a valid domain or IP address">
+                    <small class="form-text text-muted">Enter the broker address (domain or IP).</small>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary">Add Topic</button>
+                    <button type="reset" class="btn btn-secondary">Clear</button>
+                </div>
+            </form>
+
+            <div class="text-center mt-3">
+                <a href="{{ url_for('app_routes.home') }}" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New MQTT Topic</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Add New MQTT Topic</h1>
+        <form method="POST" action="{{ url_for('app_routes.add_topic') }}">
+            <div class="form-group">
+                <label for="topic_name">Topic Name:</label>
+                <input type="text" class="form-control" id="topic_name" name="topic_name" required>
+            </div>
+            <div class="form-group">
+                <label for="device_location">Device Location:</label>
+                <input type="text" class="form-control" id="device_location" name="device_location" required>
+            </div>
+            <div class="form-group">
+                <label for="device_type">Device Type:</label>
+                <input type="text" class="form-control" id="device_type" name="device_type" required>
+            </div>
+            <div class="form-group">
+                <label for="broker_address">Broker Address:</label>
+                <input type="text" class="form-control" id="broker_address" name="broker_address" required>
+            </div>
+            <div class="form-group">
+                <label for="organization">Organization:</label>
+                <input type="text" class="form-control" id="organization" name="organization" required>
+            </div>
+            <div class="form-group">
+                <label for="organogram">Organogram:</label>
+                <input type="text" class="form-control" id="organogram" name="organogram" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Topic</button>
+        </form>                
+        <div class="text-center mt-3">
+            <a href="{{ url_for('app_routes.home') }}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>-->

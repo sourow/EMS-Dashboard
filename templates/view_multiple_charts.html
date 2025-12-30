@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Multiple IoT Device Charts</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">View Multiple IoT Device Charts</h2>
+
+        <!-- Form to select topics and filter time range -->
+        <div class="form-container d-flex flex-row">
+            <form id="filterForm" class="text-center">
+                <div class="form-group" >
+                    <label for="topics">Select Topics:</label>
+                    <select id="topics" multiple class="form-control">
+                        {% for topic in topics %}
+                            <option value="{{ topic.id }}">{{ topic.topic_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="form-text text-muted">Hold Ctrl (Windows) or Command (Mac) to select multiple topics.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="timeRange">Select Time Range:</label>
+                    <select id="timeRange" class="form-control">
+                        <option value="1">Last 24 Hours</option>
+                        <option value="7">Last 7 Days</option>
+                        <option value="30">Last 30 Days</option>
+                        <option value="365">Last 365 Days</option>
+                        <option value="all" selected>All Data</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn btn-primary" id="loadChartsBtn">Load Charts</button>
+            </form>
+        </div>
+
+        <!-- Chart containers will be added dynamically -->
+        <div class="flex-container" id="chartsContainer"></div>
+
+        <p class="text-center mt-4">Data provided by <a href="https://www.btracsolutions.com/">B-Trac Solutions</a> </p>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            var selectedTopics = [];
+            var selectedRange = 'all';
+            var chartsMap = {};  // Store charts based on topic ID
+
+            // Function to initialize a chart for a specific topic
+            function createChart(topicId, topicName) {
+                var chartContainer = $('<div>').addClass('chart-container');
+                var canvas = $('<canvas>').attr('id', 'chart_' + topicId);
+                chartContainer.append(canvas);
+                $('#chartsContainer').append(chartContainer);
+
+                var ctx = canvas[0].getContext('2d');
+                var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: topicName,
+                            data: [],
+                            borderColor: 'blue',
+                            backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                            fill: true,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                type: 'category',
+                                ticks: { display: false },
+                                title: { display: true, text: 'Data Points' }
+                            },
+                            y: {
+                                beginAtZero: false,
+                                title: { display: true, text: 'Data' },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '°C';  // Add °C to each Y-axis tick
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return topicName + ': ' + tooltipItem.raw + '°C';
+                                    },
+                                    afterLabel: function(tooltipItem) {
+                                        return 'Timestamp: ' + tooltipItem.label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                chartsMap['topic_' + topicId] = chart;
+            }
+
+            // Function to load data for selected topics and range
+            function loadCharts() {
+                selectedTopics = $('#topics').val();
+                if (selectedTopics.length === 0) {
+                    alert('Please select at least one topic.');
+                    return;
+                }
+
+                $.getJSON('/load_multiple_data', { topic_ids: selectedTopics, range: selectedRange }, function(response) {
+                    // Loop through each topic and update its respective chart
+                    for (let topicId in response) {
+                        let chartData = response[topicId];
+                        let chart = chartsMap[topicId];
+                        chart.data.labels = [];
+                        chart.data.datasets[0].data = [];
+
+                        chartData.forEach(function(item) {
+                            chart.data.labels.push(item.timestamp);
+                            chart.data.datasets[0].data.push(item.param_data);
+                        });
+
+                        chart.update();
+                    }
+                });
+            }
+
+            // Set up event handler for Load Charts button
+            $('#loadChartsBtn').on('click', function() {
+                $('#chartsContainer').empty();  // Clear existing charts
+                selectedTopics = $('#topics').val();
+                selectedRange = $('#timeRange').val();
+
+                // Create a chart for each selected topic
+                selectedTopics.forEach(function(topicId) {
+                    var topicName = $('#topics option[value="' + topicId + '"]').text();
+                    createChart(topicId, topicName);
+                });
+
+                loadCharts();  // Load data for the created charts
+            });
+
+            // Polling every 10 seconds to update charts with real-time data
+            setInterval(function() {
+                if (selectedTopics.length > 0) {
+                    loadCharts();
+                }
+            }, 10000);  // Adjust interval as needed
+
+            // Handle filter changes
+            $('#timeRange').on('change', function() {
+                selectedRange = $(this).val();
+                loadCharts();  // Update data based on the selected filter
+            });
+        });
+    </script>
+</body>
+</html>

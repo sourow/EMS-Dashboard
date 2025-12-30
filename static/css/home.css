@@ -1,0 +1,66 @@
+/* General Page Styling */
+body {
+    background-color: #eaeaeb;
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+/* Accordion Section Styling */
+/* Styling for Organization and Organogram Section */
+/* Styling for Organization and Organogram Section */
+.organization-section .accordion .card {
+    border: none;
+    margin-bottom: 15px;
+    /* Add this line to set the width */
+    width: 50%; /* Set width to 50% */
+    margin-left: auto; /* Center the card */
+    margin-right: auto; /* Center the card */
+}
+
+.organization-section .accordion .card-header {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border: 1px solid #e0e0e0;
+    /* Add this line to set the width */
+    width: 100%; /* Ensure full width within the card */
+}
+
+.organization-section .accordion .collapse.show {
+    border: 1px solid #e0e0e0;
+    padding: 10px 20px;
+    /* Add this line to set the width */
+    width: 100%; /* Ensure full width within the card */
+}
+
+.organization-section .list-group-item {
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #ffffff;
+    /* Add this line to set the width */
+    width: 100%; /* Ensure full width within the list */
+}
+
+.organization-section .list-group-item a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.organization-section .list-group-item a:hover {
+    text-decoration: underline;
+}
+
+.organization-section .list-group-item i {
+    margin-right: 8px;
+}
+
+
+/* Table Styling */
+.table {
+    margin-bottom: 0;
+}

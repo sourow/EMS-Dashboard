@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Data Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #007bff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>IoT Data Summary</h1>
+    <p><strong>Device:</strong> {{ device_name }} ({{ device_type }})</p>
+    <p><strong>From:</strong> {{ start_date }} <strong>To:</strong> {{ end_date }}</p>
+    <p><strong>Trip Length:</strong> {{ summary.trip_length }}</p>
+    <p><strong>Data Count:</strong> {{ summary.data_count }}</p>
+    <p><strong>File Created At:</strong> {{ summary.file_created_at }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Min Value</td>
+                <td>{{ summary.min }}</td>
+            </tr>
+            <tr>
+                <td>Max Value</td>
+                <td>{{ summary.max }}</td>
+            </tr>
+            <tr>
+                <td>Avg Value</td>
+                <td>{{ summary.avg }}</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

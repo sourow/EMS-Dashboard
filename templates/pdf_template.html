@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IoT Data Report</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>IoT Data Report</h1>
+    <p><strong>Topic:</strong> {{ topic_name }}</p>
+    <p><strong>Date Range:</strong> {{ start_date }} to {{ end_date }}</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Parameter Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row[1] }}</td>  <!-- Assuming row[1] is the timestamp -->
+                <td>{{ row[0] }}</td>  <!-- Assuming row[0] is the param_data -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

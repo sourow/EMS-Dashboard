@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 900px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+        }
+        .card-body {
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 0 0 10px 10px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 5px;
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            border-radius: 5px;
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+        }
+        .device-btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+            text-decoration: none;
+        }
+        .device-btn:hover {
+            background-color: #0056b3;
+        }
+        .no-devices {
+            font-size: 18px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Your Devices</h1>
+
+        {% if devices %}
+            <div class="row">
+                {% for device in devices %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-microchip"></i> {{ device['device_name'] }}
+                            </div>
+                            <div class="card-body text-center">
+                                <a href="{{ url_for('app_routes.device_data', topic_id=device['topic_id']) }}" class="btn device-btn">
+                                    View Data
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center no-devices">No devices found.</p>
+        {% endif %}
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('app_routes.logout') }}" class="btn btn-danger btn-lg">Logout</a>
+        </div>
+    </div>
+
+    <!-- Include Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+</html>

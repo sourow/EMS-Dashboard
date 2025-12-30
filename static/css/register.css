@@ -1,0 +1,114 @@
+/* General Body Styling */
+body {
+    background-color: #f0f2f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #495057;
+}
+
+/* Header Styling */
+.register-header h1 {
+    font-size: 2.5rem;
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* Flexbox Form Container */
+.register-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+/* Form Box Styling */
+.register-form {
+    display: flex;
+    width: 70%;
+    max-width: 900px;
+    background-color: white;
+    padding: 40px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    flex-wrap: wrap;
+}
+
+/* Styling for Each Form Section */
+.form-section {
+    width: 100%;
+    padding: 20px;
+}
+
+/* Form Field Labels */
+.form-group label {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #495057;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+/* Input Fields */
+.form-control {
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+    outline: none;
+}
+
+/* Submit Button */
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    font-size: 1.1rem;
+    padding: 12px 15px;
+    border-radius: 8px;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    font-size: 1.1rem;
+    padding: 12px 30px;
+    border-radius: 8px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    margin-top: 15px;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Small Helper Text */
+small {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Adjustments for Mobile View */
+@media (max-width: 768px) {
+    .register-form {
+        flex-direction: column;
+        width: 90%;
+        padding: 20px;
+    }
+
+    .form-section {
+        width: 100%;
+        padding: 10px 15px;
+    }
+}
