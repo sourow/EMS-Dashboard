@@ -138,17 +138,6 @@ To clear test data:
 sqlite3 mqtt_data.db "DELETE FROM device_data_topic4;"
 ```
 
-## Troubleshooting
-- wkhtmltopdf not found:
-  - Set `WKHTMLTOPDF_PATH` to the correct executable
-  - Errors surfaced from [utils.py](file:///e:/Visual%20Studio/btrac_ems/utils.py#L7-L13)
-- “Access denied” when viewing topics:
-  - Ensure admin/user mappings in `admin_mqtt_topics` / `user_mqtt_topics`
-- No subscriber activity:
-  - Topics must exist in `mqtt_topics`; threads start at app boot via [start_threads](file:///e:/Visual%20Studio/btrac_ems/mqtt_handlers.py#L99-L111)
-- Data out of bounds dropped:
-  - Adjust `PARAM_MIN` and `PARAM_MAX` or unset them
-
 ## Notes
 - This codebase uses a modular Flask structure with Blueprints and separate MQTT/database/utils modules, aimed at maintainability and clarity for newcomers.
 - Default chart view is “All Data” for both single‑topic and multi‑chart pages.
